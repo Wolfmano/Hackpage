@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@200;300&display=swap" rel="stylesheet">
+    <title>Регистрация</title>
+</head>
+<body>
+    <div class="bg">
+        <form method="POST" class="form-container">
+            {% csrf_token %}
+            <h1 class="form-title">Регистрация</h1>
+
+            <!-- Поле Логин -->
+            <div class="input-group">
+                <label for="username" class="input-label">Логин</label>
+                <input type="text" id="username" name="username" class="input-field" placeholder="Введите ваш логин" required>
+                {% if form.username.errors %}
+                    <div class="error-message">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Поле Email -->
+            <div class="input-group">
+                <label for="email" class="input-label">Email</label>
+                <input type="email" id="email" name="email" class="input-field" placeholder="Введите ваш email" required>
+            </div>
+
+            <!-- Поле Пароль -->
+            <div class="input-group">
+                <label for="password1" class="input-label">Пароль</label>
+                <input type="password" id="password1" name="password1" class="input-field" placeholder="Введите пароль" required>
+                {% if form.password1.errors %}
+                    <div class="error-message">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Повтор пароля -->
+            <div class="input-group">
+                <label for="password2" class="input-label">Повторите пароль</label>
+                <input type="password" id="password2" name="password2" class="input-field" placeholder="Повторите пароль" required>
+                {% if form.password2.errors %}
+                    <div class="error-message">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+
+
+            <!-- Кнопка отправки -->
+            <button type="submit" class="submit-button">Зарегистрироваться</button>
+        </form>
+    </div>
+</body>
+</html>
