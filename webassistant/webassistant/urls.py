@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include("assistant.urls")),
     path('auth/',include("reg.urls")),
-    path('tickets/',include("assistant.urls")),
+    path('user/',include("personal_ticket.urls")),
 
 ]
