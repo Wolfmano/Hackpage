@@ -9,8 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
+        #side {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
         body {
             font-family: 'Roboto', sans-serif;
+        }
+        .logo-image {
+            filter: brightness(0) invert(1);
+            width: auto;
+            height: auto;
         }
     </style>
 </head>
@@ -18,11 +29,18 @@
 <body class="bg-[#F0F4FF] text-[#333333]">
     <div class="flex">
         <aside class="w-64 bg-[#154385] text-white h-screen">
-            <div class="p-6 text-center font-bold text-2xl">Личный кабинет</div>
-            <nav class="">
-                <a href="#" class="block py-2.5 px-8 hover:bg-[#1a5ca8]">Мои тикеты</a>
-                <a href="#" class="block py-2.5 px-8 hover:bg-[#1a5ca8]">Профиль</a>
-            </nav>
+            <div id="side">
+                <div>
+                    <div class="p-6 text-center font-bold text-2xl">Личный кабинет</div>
+                    <nav>
+                        <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Мои тикеты</a>
+                        <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Профиль</a>
+                    </nav>
+                </div>
+                <div class="p-6">
+                    <img src="https://s1.stc.all.kpcdn.net/best/rostov/abiturient_2017/images/tild3739-6338-4664-a239-313234373730__logo_.png" class="logo-image">
+                </div>
+            </div>
         </aside>
         <main class="flex-1 p-6">
             <h1 class="text-3xl font-bold mb-6">Список тикетов</h1>
@@ -46,28 +64,31 @@
                     <option>IT-инфраструктура</option>
                 </select>
             </div>
-
+            <!--Пример тикета-->
             <div class="bg-white shadow overflow-hidden sm:rounded-lg">
                 <ul class="divide-y divide-gray-200">
                     <li class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
-                            <button class="text-sm font-medium text-[#154385] truncate">Тикет 1: Процедура поступления</button>
-                            <div class="ml-2 flex-shrink-0 flex">
-                                <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Активен</p>
+                            <div>
+                                <button class="text-sm font-medium text-[#154385] truncate mr-2 text-xl">Тикет 1: Процедура поступления</button>
+                                <div class="mt-1">
+                                    <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                        <i class="fas fa-tag mr-1"></i>
+                                        Категория: Процедура поступления
+                                    </div>
+                                    <div class="sm:flex">
+                                        <p class="flex items-center text-sm text-gray-500">
+                                            <i class="fas fa-calendar-alt mr-1"></i>
+                                            Создан: 01.01.2023
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-xl bg-[#1a5ca8] text-white rounded-lg hover:bg-[#3a75c4] py-2 px-2">
+                                <button>Закрыть тикет</button>
                             </div>
                         </div>
-                        <div class="mt-2 sm:flex sm:justify-between">
-                            <div class="sm:flex">
-                                <p class="flex items-center text-sm text-gray-500">
-                                    <i class="fas fa-calendar-alt mr-1"></i>
-                                    Создан: 01.01.2023
-                                </p>
-                            </div>
-                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                                <i class="fas fa-tag mr-1"></i>
-                                Категория: Процедура поступления
-                            </div>
-                        </div>
+                
                     </li>
                 </ul>
             </div>
