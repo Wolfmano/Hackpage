@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from assistant.forms import TicketForm
 
 from rest_framework.decorators import api_view
-from rest_framewmork.response import Response
+from rest_framework.response import Response
 from rest_framework import status
 from .models import Message
 
