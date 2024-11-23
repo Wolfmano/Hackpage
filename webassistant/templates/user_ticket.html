@@ -76,14 +76,17 @@
                     <li class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
+                                <div class="flex">
+                                    <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
+                                    <p class="ml-3 mb-1 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        {{ ticket.get_status_display }}
+                                    </p>
+                                </div>
                                 <p class="text-sm text-gray-500">Категория: {{ ticket.category.name }}</p>
                                 <p class="text-sm text-gray-500">Создан: {{ ticket.created_at|date:"d.m.Y" }}</p>
                             </div>
                             <div>
-                                <p class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ ticket.get_status_display }}
-                                </p>
+                                
                                 {% if ticket.status != 'closed' %}
                                 <form method="post" action="{% url 'close_ticket' ticket.id %}">
                                     {% csrf_token %}
