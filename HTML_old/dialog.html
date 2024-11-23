@@ -78,12 +78,12 @@
                 <div class="clear-both"></div>
             </div>
             <div class="flex items-center">
-                <input type="text" placeholder="Введите ваше сообщение..." class="chat-input flex-1">
+                <input id="chat-message-input" type="text" placeholder="Введите ваше сообщение..." class="chat-input flex-1">
                 <label for="file-upload" class="bg-accent text-white px-4 py-2 rounded-full hover:bg-yellow-600 cursor-pointer mr-2">
                     <i class="fas fa-paperclip"></i>
                 </label>
                 <input id="file-upload" type="file" class="file-input">
-                <button class="bg-accent text-white px-6 py-2 rounded-full hover:bg-yellow-600">
+                <button id="chat-message-submit" class="bg-accent text-white px-6 py-2 rounded-full hover:bg-yellow-600">
                     <i class="fas fa-paper-plane"></i> Отправить
                 </button>
             </div>
@@ -91,6 +91,60 @@
     </div>
 
     <script>
+        const ticketId = '{{ ticket.id }}'; // Получите ID тикета из контекста
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const chatSocket = new WebSocket(
+            wsScheme + '://'
+            + window.location.host
+            + '/ws/chat/'
+            + ticketId
+            + '/'
+        );
+    
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const message = data.message;
+            const user = data.user;
+    
+            // Добавляем сообщение в область переписки
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('chat-message');
+            if (user === '{{ user.username }}') {
+                messageContainer.classList.add('mine', 'float-right');
+            }
+    
+            const messageContent = document.createElement('p');
+            messageContent.classList.add('text-sm');
+            messageContent.innerHTML = `<strong>${user}:</strong> ${message}`;
+    
+            messageContainer.appendChild(messageContent);
+    
+            const chatArea = document.querySelector('.space-y-4');
+            chatArea.appendChild(messageContainer);
+    
+            // Прокручиваем вниз
+            chatArea.scrollTop = chatArea.scrollHeight;
+        };
+    
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // Нажатие Enter
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+    
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
     </script>
 </body>
 
