@@ -31,8 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-
-    'personal_ticket',
     'assistant',
     'reg',
     'django.contrib.admin',

@@ -12,11 +12,28 @@ def logout_view(request):
     return redirect(reverse('index'))
 
 
-def login_view(request):
-    redirect_url = reverse('index')
+# def login_view(request):
+#
+#     redirect_url = reverse('index')
+#     if request.method == "GET":
+#         if request.user.is_authenticated:
+#              return redirect(redirect_url)
+#         else:
+#
+#             return render(request, 'login.html')
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return redirect(redirect_url)
+#     return render(request, 'login.html', {"error": "Пользователь не найден"})
 
-    if request.method == "GET":
-        if request.user.is_authenticated:
+def login_view(request):
+    redirect_url = reverse('index')  # URL для перенаправления после успешного входа
+
+    if request.method == "GET":  # Если GET-запрос
+        if request.user.is_authenticated:  # Если пользователь уже вошел
             return redirect(redirect_url)
         return render(request, 'login.html')  # Показываем страницу входа
 
