@@ -62,17 +62,13 @@
             </div>
         </aside>
 
-        <!-- Затемнение фона -->
         <div id="overlay" class="overlay"></div>
 
-        <!-- Основной контент -->
         <main class="flex-1 p-6 md:ml-64">
-            <!-- Кнопка для открытия боковой панели на мобильных устройствах -->
             <div class="md:hidden flex justify-between items-center mb-4">
                 <button id="menu-button" class="text-[#154385] focus:outline-none">
                     <i class="fas fa-bars fa-2x"></i>
                 </button>
-                <!-- Удалена надпись "Личный кабинет" из мобильного заголовка -->
             </div>
 
             {% if messages %}
@@ -152,7 +148,6 @@
         </main>
     </div>
 
-    <!-- Скрипт для управления боковой панелью на мобильных устройствах -->
     <script>
         const menuButton = document.getElementById('menu-button');
         const sidebar = document.getElementById('sidebar');

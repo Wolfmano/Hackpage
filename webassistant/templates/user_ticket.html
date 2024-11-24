@@ -44,7 +44,6 @@
 
 <body class="bg-[#F0F4FF] text-[#333333]">
     <div class="flex flex-col md:flex-row">
-        <!-- Боковая панель -->
         <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[#154385] text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out sidebar-transition z-50">
             <div class="flex flex-col h-full">
                 <div class="p-6 text-center font-bold text-2xl border-b border-[#1a5ca8]">Личный кабинет</div>
@@ -62,17 +61,13 @@
             </div>
         </aside>
 
-        <!-- Затемнение фона -->
         <div id="overlay" class="overlay"></div>
 
-        <!-- Основной контент -->
         <main class="flex-1 p-6 md:ml-64">
-            <!-- Кнопка для открытия боковой панели на мобильных устройствах -->
             <div class="md:hidden flex justify-between items-center mb-4">
                 <button id="menu-button" class="text-[#154385] focus:outline-none">
                     <i class="fas fa-bars fa-2x"></i>
                 </button>
-                <!-- Удалена надпись "Личный кабинет" из мобильного заголовка -->
             </div>
 
             {% if messages %}
