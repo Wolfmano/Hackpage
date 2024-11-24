@@ -14,7 +14,7 @@
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             background-color: #F0F4FF;
@@ -27,6 +27,9 @@
             flex-direction: column;
             padding: 1.5rem;
             box-sizing: border-box;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .bg-primary {
@@ -52,17 +55,53 @@
             border-radius: 0.5rem;
             margin-bottom: 1.5rem;
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: flex-start;
+            position: relative; /* Для позиционирования кнопки на мобильных */
+        }
+
+        @media (min-width: 640px) {
+            .header {
+                flex-direction: row;
+                align-items: center;
+            }
         }
 
         .header .title {
             margin: 0;
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .header .title {
+                font-size: 2xl;
+            }
         }
 
         .header .description {
             margin: 0.5rem 0 0 0;
             color: #555555;
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .header .description {
+                font-size: 1rem;
+            }
+        }
+
+        /* Контейнер для кнопки закрытия */
+        .header .close-button-container {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .header .close-button-container {
+                position: static;
+                margin-left: 1rem;
+            }
         }
 
         .chat-section {
@@ -78,6 +117,13 @@
         .chat-section h2 {
             margin-bottom: 1rem;
             color: #154385;
+            font-size: 1.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .chat-section h2 {
+                font-size: 2xl;
+            }
         }
 
         .chat-container {
@@ -87,6 +133,7 @@
             flex-direction: column;
             gap: 1rem;
             padding-right: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .chat-message {
@@ -119,6 +166,13 @@
         .chat-message .username {
             font-weight: bold;
             margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .chat-message .username {
+                font-size: 1rem;
+            }
         }
 
         .chat-message.mentor .username {
@@ -138,6 +192,13 @@
             flex: 1;
             min-width: 0;
             box-sizing: border-box;
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .chat-input {
+                font-size: 1rem;
+            }
         }
 
         .file-input {
@@ -160,7 +221,8 @@
         .message-form {
             display: flex;
             align-items: center;
-            margin-top: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .send-button {
@@ -173,6 +235,13 @@
             display: flex;
             align-items: center;
             transition: background-color 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        @media (min-width: 640px) {
+            .send-button {
+                font-size: 1rem;
+            }
         }
 
         .send-button:hover {
@@ -192,20 +261,47 @@
             background-color: rgba(0, 0, 0, 0.2);
             border-radius: 4px;
         }
+
+        /* Дополнительные стили для мобильных устройств */
+        @media (max-width: 639px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .chat-section {
+                padding: 1rem;
+            }
+
+            .send-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .message-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            /* Дополнительные стили для кнопки закрытия */
+            .header .close-button-container {
+                top: 1rem;
+                right: 1rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="container mx-auto">
-        <div class="header flex justify-between center">
+    <div class="container">
+        <div class="header">
             <div>
-                <h1 class="text-2xl font-bold text-primary">Тикет: Процедура поступления</h1>
-                <p class="description">Описание вопроса: Какие документы необходимы для поступления, и каковы сроки подачи заявок?</p>
+                <h1 class="title text-2xl font-bold text-primary">Тикет: {{ ticket.title }}</h1>
+                <p class="description">Описание вопроса: {{ ticket.description }}</p>
             </div>
-            <div>
-                <a href="{% url 'profile_ticket_list' %}" >
-                        <button class="w-6 mt-5 mr-4">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2976/2976286.png">
+            <div class="close-button-container">
+                <a href="{% url 'profile_ticket_list' %}">
+                    <button class="w-6 mt-1 mr-2" aria-label="Закрыть">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2976/2976286.png" alt="Назад">
                     </button>
                 </a>
             </div>
@@ -273,7 +369,7 @@
 
                         const messageDiv = document.createElement('div');
 
-                        if (data.user === '{{ user.username }}') { 
+                        if (data.user === '{{ user.username }}') {
                             messageDiv.classList.add('chat-message', 'mine');
                         } else {
                             messageDiv.classList.add('chat-message', 'mentor');

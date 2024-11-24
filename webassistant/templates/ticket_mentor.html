@@ -9,57 +9,109 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        .heder {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1.5%;
-        }
-        #side {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-        }
         body {
             font-family: 'Roboto', sans-serif;
         }
+
         .logo-image {
             filter: brightness(0) invert(1);
             width: auto;
             height: auto;
         }
+
+        /* Затемнение фона при открытой боковой панели */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Анимация боковой панели */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
     </style>
 </head>
 
 <body class="bg-[#F0F4FF] text-[#333333]">
-    <div class="flex">
-        <aside class="w-64 bg-[#154385] text-white h-screen">
-            <div id="side">
-                <div>
-                    <div class="p-6 text-center font-bold text-2xl">Личный кабинет</div>
-                    <nav>
-                        <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Мои тикеты</a>
-                        <a href="{% url 'logout' %}" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Выйти</a>
-                    </nav>
-                </div>
+    <div class="flex flex-col md:flex-row">
+        <!-- Боковая панель -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-[#154385] text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out sidebar-transition z-50">
+            <div class="flex flex-col h-full">
+                <div class="p-6 text-center font-bold text-2xl border-b border-[#1a5ca8]">Личный кабинет</div>
+                <nav class="flex-1 px-4 py-6 space-y-2">
+                    <a href="#" class="flex items-center p-2 text-lg rounded hover:bg-[#1a5ca8] transition-colors">
+                        <i class="fas fa-ticket-alt mr-3"></i> Мои тикеты
+                    </a>
+                    <a href="{% url 'logout' %}" class="flex items-center p-2 text-lg rounded hover:bg-[#1a5ca8] transition-colors">
+                        <i class="fas fa-sign-out-alt mr-3"></i> Выйти
+                    </a>
+                </nav>
                 <div class="p-6">
-                    <img src="https://s1.stc.all.kpcdn.net/best/rostov/abiturient_2017/images/tild3739-6338-4664-a239-313234373730__logo_.png" class="logo-image">
+                    <img src="https://s1.stc.all.kpcdn.net/best/rostov/abiturient_2017/images/tild3739-6338-4664-a239-313234373730__logo_.png" class="logo-image w-64 mx-auto">
                 </div>
             </div>
         </aside>
-        <main class="flex-1 p-6">
-            <div class="mb-4">
-                <form method="get" action="{% url 'profile_ticket_list' %}">
-                    <label for="category" class="block text-lg font-bold text-gray-700">Фильтрация по категориям:</label>
-                    <select id="category" name="category" class="mt-1 mb-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#154385] focus:border-[#154385] sm:text-sm rounded-md">
-                        <option value="">Все категории</option>
-                        {% for category in categories %}
-                        <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
-                            {{ category.name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" class="mt-2 text-white bg-blue-500 hover:bg-blue-600 rounded px-4 py-2">Фильтровать</button>
+
+        <!-- Затемнение фона -->
+        <div id="overlay" class="overlay"></div>
+
+        <!-- Основной контент -->
+        <main class="flex-1 p-6 md:ml-64">
+            <!-- Кнопка для открытия боковой панели на мобильных устройствах -->
+            <div class="md:hidden flex justify-between items-center mb-4">
+                <button id="menu-button" class="text-[#154385] focus:outline-none">
+                    <i class="fas fa-bars fa-2x"></i>
+                </button>
+                <!-- Удалена надпись "Личный кабинет" из мобильного заголовка -->
+            </div>
+
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="p-4 mb-4 text-sm text-{{ message.tags }}-700 bg-{{ message.tags }}-100 rounded-lg" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="heder flex flex-col md:flex-row md:items-center md:justify-between">
+                <h1 class="text-2xl md:text-3xl font-bold mb-4 md:mb-0">Список тикетов</h1>
+                {% if can_create_ticket %}
+                <div class="flex-shrink-0">
+                    <a href="{% url 'create_ticket' %}" class="flex items-center text-lg bg-[#1a5ca8] hover:bg-[#3a75c4] text-white rounded-lg py-2 px-4 transition-colors">
+                        <i class="fas fa-plus mr-2"></i> Создать новый
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4 mt-6">
+                <form method="get" action="{% url 'profile_ticket_list' %}" class="flex flex-col sm:flex-row sm:items-center">
+                    <label for="category" class="block text-lg font-bold text-gray-700 mb-2 sm:mb-0 sm:mr-4">Фильтрация по категориям:</label>
+                    <div class="flex flex-col sm:flex-row sm:items-center w-full">
+                        <select id="category" name="category" class="flex-1 mb-2 sm:mb-0 sm:mr-4 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#154385] focus:border-[#154385]">
+                            <option value="">Все категории</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="w-full sm:w-auto text-white bg-blue-500 hover:bg-blue-600 rounded px-4 py-2 transition-colors">
+                            <i class="fas fa-filter mr-2"></i> Фильтровать
+                        </button>
+                    </div>
                 </form>
             </div>
 
@@ -67,26 +119,25 @@
                 <ul class="divide-y divide-gray-200">
                     {% for ticket in tickets %}
                     <li class="px-4 py-4 sm:px-6">
-                        <div class="flex items-center justify-between">
-                            <a href="{% url 'ticket_detail' ticket_id=ticket.id %}">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                            <a href="{% url 'ticket_detail' ticket_id=ticket.id %}" class="flex-1">
                                 <div>
-                                    <div class="flex">
+                                    <div class="flex flex-col md:flex-row md:items-center">
                                         <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
-                                        <p class="ml-3 mb-1 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                        <p class="mt-2 md:mt-0 md:ml-3 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                             {{ ticket.get_status_display }}
                                         </p>
                                     </div>
                                     <p class="text-sm text-gray-500">Категория: {{ ticket.category.name }}</p>
                                     <p class="text-sm text-gray-500">Создан: {{ ticket.created_at|date:"d.m.Y" }}</p>
                                 </div>
-                             </a>
-                            <div>
-                                
+                            </a>
+                            <div class="mt-4 md:mt-0">
                                 {% if ticket.status != 'closed' %}
                                 <form method="post" action="{% url 'close_ticket' ticket.id %}">
                                     {% csrf_token %}
-                                    <button type="submit" class="mt-2 text-white bg-red-500 hover:bg-red-600 rounded px-4 py-2">
-                                        Закрыть тикет
+                                    <button type="submit" class="flex items-center text-white bg-red-500 hover:bg-red-600 rounded px-4 py-2 transition-colors">
+                                        <i class="fas fa-times mr-2"></i> Закрыть тикет
                                     </button>
                                 </form>
                                 {% endif %}
@@ -100,6 +151,23 @@
             </div>
         </main>
     </div>
+
+    <!-- Скрипт для управления боковой панелью на мобильных устройствах -->
+    <script>
+        const menuButton = document.getElementById('menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.remove('active');
+        });
+    </script>
 </body>
 
 </html>
