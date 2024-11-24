@@ -39,7 +39,6 @@
                     <div class="p-6 text-center font-bold text-2xl">Личный кабинет</div>
                     <nav>
                         <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Мои тикеты</a>
-                        <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Профиль</a>
                         <a href="{% url 'logout' %}" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Выйти</a>
                     </nav>
                 </div>
@@ -51,8 +50,8 @@
         <main class="flex-1 p-6">
             <div class="mb-4">
                 <form method="get" action="{% url 'profile_ticket_list' %}">
-                    <label for="category" class="block text-sm font-medium text-gray-700">Фильтрация по категориям:</label>
-                    <select id="category" name="category" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#154385] focus:border-[#154385] sm:text-sm rounded-md">
+                    <label for="category" class="block text-lg font-bold text-gray-700">Фильтрация по категориям:</label>
+                    <select id="category" name="category" class="mt-1 mb-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#154385] focus:border-[#154385] sm:text-sm rounded-md">
                         <option value="">Все категории</option>
                         {% for category in categories %}
                         <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
@@ -69,16 +68,18 @@
                     {% for ticket in tickets %}
                     <li class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
-                            <div>
-                                <div class="flex">
-                                    <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
-                                    <p class="ml-3 mb-1 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                        {{ ticket.get_status_display }}
-                                    </p>
+                            <a href="{% url 'ticket_detail' ticket_id=ticket.id %}">
+                                <div>
+                                    <div class="flex">
+                                        <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
+                                        <p class="ml-3 mb-1 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            {{ ticket.get_status_display }}
+                                        </p>
+                                    </div>
+                                    <p class="text-sm text-gray-500">Категория: {{ ticket.category.name }}</p>
+                                    <p class="text-sm text-gray-500">Создан: {{ ticket.created_at|date:"d.m.Y" }}</p>
                                 </div>
-                                <p class="text-sm text-gray-500">Категория: {{ ticket.category.name }}</p>
-                                <p class="text-sm text-gray-500">Создан: {{ ticket.created_at|date:"d.m.Y" }}</p>
-                            </div>
+                             </a>
                             <div>
                                 
                                 {% if ticket.status != 'closed' %}
