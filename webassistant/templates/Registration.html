@@ -68,34 +68,9 @@
                 <div class="mb-6">
                     <button type="submit" class="bg-accent w-full p-3 text-white rounded hover:bg-yellow-600">Зарегистрироваться</button>
                 </div>
-                <div class="text-center">
-                    <a href="#" class="text-sm" id="form-toggle">Уже зарегистрированы? Войти</a>
-                </div>
             </form>
         </div>
     </div>
-
-    <script>
-        const form = document.getElementById('form');
-        const formTitle = document.getElementById('form-title');
-        const formToggle = document.getElementById('form-toggle');
-        const nameField = document.getElementById('name');
-
-        formToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (formTitle.textContent === 'Регистрация') {
-                formTitle.textContent = 'Вход';
-                nameField.style.display = 'none';
-                formToggle.textContent = 'Нет аккаунта? Зарегистрироваться';
-                form.querySelector('button').textContent = 'Войти';
-            } else {
-                formTitle.textContent = 'Регистрация';
-                nameField.style.display = 'block';
-                formToggle.textContent = 'Уже зарегистрированы? Войти';
-                form.querySelector('button').textContent = 'Зарегистрироваться';
-            }
-        });
-    </script>
 </body>
 
 </html>

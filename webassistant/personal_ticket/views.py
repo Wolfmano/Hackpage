@@ -19,24 +19,33 @@ import json
 @login_required
 def profile_ticket_list(request):
     user = request.user
-    tickets = Ticket.objects.all()  # Изначально получаем все тикеты
+    tickets = Ticket.objects.all()
     category_id = request.GET.get('category')
 
-    # Фильтруем по категории, если она указана
     if category_id:
         tickets = tickets.filter(category_id=category_id)
 
-    # Исключаем закрытые тикеты
     tickets = tickets.exclude(status='closed')
 
     categories = Category.objects.all()
-
-    # Разделяем логику для роли "mentor" и "student"
     if user.role == "mentor":
         print(user.role)
         return render(request, 'ticket_mentor.html', {'tickets': tickets, 'categories': categories})
     elif user.role == "student":
-        return render(request, 'user_ticket.html', {'tickets': tickets, 'categories': categories})
+        tickets = Ticket.objects.filter(author=user, status__in=['open', 'in_progress']) 
+        if category_id:
+            tickets = tickets.filter(category_id=category_id)
+        
+        open_ticket_count = Ticket.objects.filter(author=user, status__in=['open', 'in_progress']).count()
+        can_create_ticket = open_ticket_count < 3
+
+        context = {
+            'tickets': tickets,
+            'categories': categories,
+            'can_create_ticket': can_create_ticket,
+            'open_ticket_count': open_ticket_count,
+        }
+        return render(request, 'user_ticket.html', context)
 
 
 def close_ticket(request, ticket_id):
@@ -44,7 +53,6 @@ def close_ticket(request, ticket_id):
     if request.method == 'POST':
         ticket.status = 'closed'
         ticket.save()
-        messages.success(request, f"Тикет '{ticket.title}' успешно закрыт.")
     return redirect('profile_ticket_list')
 
 
@@ -53,17 +61,13 @@ def create_ticket(request):
     if request.method == 'POST':
         form = TicketForm(request.POST)
         if form.is_valid():
-            ticket = form.save(commit=False)  # Сохраняем объект тикета, но не сохраняем в базу
-            ticket.author = request.user  # Привязываем автором текущего пользователя (если необходимо)
-            ticket.save()  # Сохраняем тикет в базу данных
-            return redirect('profile_ticket_list')  # Перенаправляем после успешного создания тикета
+            ticket = form.save(commit=False)
+            ticket.author = request.user
+            ticket.save()
+            return redirect('profile_ticket_list')
     else:
         form = TicketForm()
     return render(request, 'create.html', {'form': form})
-
-
-# def message_ticket(request):
-#     return render(request, 'message_ticket.html')
 
 
 
@@ -78,7 +82,6 @@ def ticket_detail_view(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     messages = ticket.messages.all()
 
-    # Форма для отправки сообщений
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
@@ -86,7 +89,7 @@ def ticket_detail_view(request, ticket_id):
             message.ticket = ticket
             message.user = request.user
             message.save()
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':  # Если это AJAX запрос
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
                     'message': message.text,
                     'user': message.user.username,
@@ -98,5 +101,3 @@ def ticket_detail_view(request, ticket_id):
         form = MessageForm()
 
     return render(request, 'message_ticket.html', {'ticket': ticket, 'messages': messages, 'form': form})
-
-# Create your views here.

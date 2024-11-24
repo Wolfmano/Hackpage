@@ -14,15 +14,18 @@
             justify-content: space-between;
             margin-bottom: 1.5%;
         }
+
         #side {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             height: 100%;
         }
+
         body {
             font-family: 'Roboto', sans-serif;
         }
+
         .logo-image {
             filter: brightness(0) invert(1);
             width: auto;
@@ -39,7 +42,6 @@
                     <div class="p-6 text-center font-bold text-2xl">Личный кабинет</div>
                     <nav>
                         <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Мои тикеты</a>
-                        <a href="#" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Профиль</a>
                         <a href="{% url 'logout' %}" class="block py-3 text-lg px-8 hover:bg-[#1a5ca8]">Выйти</a>
                     </nav>
                 </div>
@@ -49,16 +51,33 @@
             </div>
         </aside>
         <main class="flex-1 p-6">
+            <!-- Вывод сообщений Django -->
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="p-4 mb-4 text-sm text-{{ message.tags }}-700 bg-{{ message.tags }}-100 rounded-lg" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <div class="heder">
                 <h1 class="text-3xl font-bold">Список тикетов</h1>
+                {% if can_create_ticket %}
                 <div class="text-xl bg-[#1a5ca8] text-white rounded-lg hover:bg-[#3a75c4] py-2 px-2">
                     <a href="{% url 'create_ticket' %}">Создать новый</a>
                 </div>
+                {% else %}
+                <div class="text-xl bg-gray-500 text-white rounded-lg py-2 px-2 cursor-not-allowed">
+                    <span>Достигнуто максимальное количество открытых тикетов ({{ open_ticket_count }}/3)</span>
+                </div>
+                {% endif %}
             </div>
             <div class="mb-4">
                 <form method="get" action="{% url 'profile_ticket_list' %}">
-                    <label for="category" class="block text-sm font-medium text-gray-700">Фильтрация по категориям:</label>
-                    <select id="category" name="category" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#154385] focus:border-[#154385] sm:text-sm rounded-md">
+                    <label for="category" class="block text-lg font-bold text-gray-700">Фильтрация по категориям:</label>
+                    <select id="category" name="category" class="mt-1 mb-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-[#154385] focus:border-[#154385] sm:text-sm rounded-md">
                         <option value="">Все категории</option>
                         {% for category in categories %}
                         <option value="{{ category.id }}" {% if category.id|stringformat:"s" == request.GET.category %}selected{% endif %}>
@@ -76,17 +95,18 @@
                     <li class="px-4 py-4 sm:px-6">
                         <div class="flex items-center justify-between">
                             <a href="{% url 'ticket_detail' ticket_id=ticket.id %}">
-
                                 <div>
-                                    <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
+                                    <div class="flex">
+                                        <h2 class="text-xl font-medium text-[#154385] truncate">{{ ticket.title }}</h2>
+                                        <p class="ml-3 mb-1 px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            {{ ticket.get_status_display }}
+                                        </p>
+                                    </div>
                                     <p class="text-sm text-gray-500">Категория: {{ ticket.category.name }}</p>
                                     <p class="text-sm text-gray-500">Создан: {{ ticket.created_at|date:"d.m.Y" }}</p>
                                 </div>
-                             </a>
+                            </a>
                             <div>
-                                <p class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                    {{ ticket.get_status_display }}
-                                </p>
                                 {% if ticket.status != 'closed' %}
                                 <form method="post" action="{% url 'close_ticket' ticket.id %}">
                                     {% csrf_token %}
@@ -102,6 +122,11 @@
                     <li class="px-4 py-4 sm:px-6 text-center text-gray-500">Нет тикетов для отображения.</li>
                     {% endfor %}
                 </ul>
+            </div>
+
+            <!-- Отображение количества открытых тикетов -->
+            <div class="mt-4">
+                <p class="text-gray-700">У вас <strong>{{ open_ticket_count }}</strong> открытых тикетов из максимально допустимых 3.</p>
             </div>
         </main>
     </div>
