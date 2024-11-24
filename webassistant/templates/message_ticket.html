@@ -197,13 +197,17 @@
 
 <body>
     <div class="container mx-auto">
-        <div class="header">
+        <div class="header flex justify-between center">
             <div>
                 <h1 class="text-2xl font-bold text-primary">Тикет: Процедура поступления</h1>
                 <p class="description">Описание вопроса: Какие документы необходимы для поступления, и каковы сроки подачи заявок?</p>
             </div>
             <div>
-                <button class="fab fa-xmark" aria-label="Закрыть"></button>
+                <a href="{% url 'profile_ticket_list' %}" >
+                        <button class="w-6 mt-5 mr-4">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2976/2976286.png">
+                    </button>
+                </a>
             </div>
         </div>
 
@@ -230,9 +234,6 @@
             <form id="message-form" method="POST" class="message-form">
                 {% csrf_token %}
                 <input id="chat-message-input" name="text" type="text" class="chat-input" placeholder="Введите ваше сообщение..." required>
-                <label for="file-upload" class="bg-accent text-white px-4 py-3 rounded-full hover:bg-yellow-600 cursor-pointer mr-2">
-                    <i class="fas fa-paperclip"></i>
-                </label>
                 <input id="file-upload" type="file" class="file-input">
                 <button type="submit" id="chat-message-submit" class="send-button">
                     <i class="fas fa-paper-plane"></i> Отправить
